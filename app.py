@@ -4,6 +4,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
+import base64
 
 def fetch_poster(movie_id):
     url=f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=b1f5e37a64473be910b84012e5a33bad&language=en-US"
@@ -27,6 +28,34 @@ def recommend(movie):
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies_list = pd.DataFrame(movies_dict)
 similarity = pickle.load(open('similarity.pkl','rb'))
+
+with open("movie_bg.jpg", "rb") as f:
+    encoded_image = base64.b64encode(f.read()).decode()
+
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image:
+            linear-gradient(
+                rgba(10, 10, 20, 0.80),
+                rgba(10, 10, 20, 0.90)
+            ),
+            url("data:image/jpeg;base64,{encoded_image}");
+
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+
+    h1 {{
+        color: white;
+        text-align: center;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("Movie Recommender System")
 selected_movie_name=st.selectbox('Search your Movie',movies_list['title'].values)
